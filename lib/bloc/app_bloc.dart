@@ -9,11 +9,22 @@ import 'package:photo_gallery_app/bloc/app_state.dart';
 import 'package:photo_gallery_app/utils/upload_image.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
-  AppBloc() : super(const AppStateLoggedOut(isLoading: false)) {
+  AppBloc()
+      : super(
+          const AppStateLoggedOut(
+            isLoading: false,
+            isSnackBar: false,
+          ),
+        ) {
     // handle logging in
     on<AppEventLogin>((event, emit) async {
       // start loading
-      emit(const AppStateLoggedOut(isLoading: true));
+      emit(
+        const AppStateLoggedOut(
+          isLoading: true,
+          isSnackBar: false,
+        ),
+      );
 
       final email = event.email;
       final password = event.password;
@@ -34,6 +45,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             isLoading: false,
             user: user,
             images: images,
+            isSnackBar: false,
           ),
         );
       } on FirebaseAuthException catch (e) {
@@ -41,6 +53,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           AppStateLoggedOut(
             isLoading: false,
             authError: AuthError.from(e),
+            isSnackBar: false,
           ),
         );
       }
@@ -48,23 +61,43 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
     // handle go to login
     on<AppEventGoToLogin>((event, emit) {
-      emit(const AppStateLoggedOut(isLoading: false));
+      emit(
+        const AppStateLoggedOut(
+          isLoading: false,
+          isSnackBar: false,
+        ),
+      );
     });
 
     // handle go to registration
     on<AppEventGoToRegisteration>((event, emit) {
-      emit(const AppStateIsInRegistrationView(isLoading: false));
+      emit(
+        const AppStateIsInRegistrationView(
+          isLoading: false,
+          isSnackBar: false,
+        ),
+      );
     });
 
     // handle go to forgot password
     on<AppEventGoToForgotPassword>((event, emit) {
-      emit(const AppStateIsInForgotPasswordView(isLoading: false));
+      emit(
+        const AppStateIsInForgotPasswordView(
+          isLoading: false,
+          isSnackBar: false,
+        ),
+      );
     });
 
     // handle registration
     on<AppEventRegister>((event, emit) async {
       // start loading
-      emit(const AppStateIsInRegistrationView(isLoading: true));
+      emit(
+        const AppStateIsInRegistrationView(
+          isLoading: true,
+          isSnackBar: false,
+        ),
+      );
 
       final email = event.email;
       final password = event.password;
@@ -81,6 +114,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             isLoading: false,
             user: credentials.user!,
             images: const [],
+            isSnackBar: false,
           ),
         );
       } on FirebaseAuthException catch (e) {
@@ -88,6 +122,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           AppStateIsInRegistrationView(
             isLoading: false,
             authError: AuthError.from(e),
+            isSnackBar: false,
           ),
         );
       }
@@ -96,7 +131,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     // handle forgot password
     on<AppEventForgotPassword>((event, emit) async {
       // start loading
-      emit(const AppStateIsInForgotPasswordView(isLoading: true));
+      emit(
+        const AppStateIsInForgotPasswordView(
+          isLoading: true,
+          isSnackBar: false,
+        ),
+      );
 
       final email = event.email;
       try {
@@ -105,12 +145,21 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         /// can sign in with new password
         await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
 
-        emit(const AppStateLoggedOut(isLoading: false));
+        emit(
+          const AppStateLoggedOut(
+            isLoading: false,
+            isSnackBar: true,
+            snackBarTitle: 'Success',
+            snackBarDescription:
+                'A reset password link has been sent to your email',
+          ),
+        );
       } on FirebaseAuthException catch (e) {
         emit(
           AppStateIsInForgotPasswordView(
             isLoading: false,
             authError: AuthError.from(e),
+            isSnackBar: false,
           ),
         );
       }
@@ -122,7 +171,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       final user = FirebaseAuth.instance.currentUser;
       // log the user out if we don'thave a current user
       if (user == null) {
-        emit(const AppStateLoggedOut(isLoading: false));
+        emit(
+          const AppStateLoggedOut(
+            isLoading: false,
+            isSnackBar: false,
+          ),
+        );
       } else {
         // fetch the user's uploaded images
         final images = await _getImages(user.uid);
@@ -131,6 +185,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             isLoading: false,
             user: user,
             images: images,
+            isSnackBar: false,
           ),
         );
       }
@@ -139,13 +194,23 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     // handle logging out
     on<AppEventLogout>((event, emit) async {
       // start loading
-      emit(const AppStateLoggedOut(isLoading: true));
+      emit(
+        const AppStateLoggedOut(
+          isLoading: true,
+          isSnackBar: false,
+        ),
+      );
 
       // log the user out
       await FirebaseAuth.instance.signOut();
 
       // log the user out in the UI as well
-      emit(const AppStateLoggedOut(isLoading: false));
+      emit(
+        const AppStateLoggedOut(
+          isLoading: false,
+          isSnackBar: false,
+        ),
+      );
     });
 
     // handle account deletion
@@ -153,7 +218,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       final user = FirebaseAuth.instance.currentUser;
       // log the user out if we don'thave a current user
       if (user == null) {
-        emit(const AppStateLoggedOut(isLoading: false));
+        emit(
+          const AppStateLoggedOut(
+            isLoading: false,
+            isSnackBar: false,
+          ),
+        );
         return;
       }
 
@@ -163,6 +233,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           isLoading: true,
           user: user,
           images: state.images ?? [],
+          isSnackBar: false,
         ),
       );
 
@@ -188,7 +259,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         await FirebaseAuth.instance.signOut();
 
         // log the user out in the UI as well
-        emit(const AppStateLoggedOut(isLoading: false));
+        emit(
+          const AppStateLoggedOut(
+            isLoading: false,
+            isSnackBar: false,
+          ),
+        );
       } on FirebaseAuthException catch (e) {
         emit(
           AppStateLoggedIn(
@@ -196,12 +272,18 @@ class AppBloc extends Bloc<AppEvent, AppState> {
             user: user,
             images: state.images ?? [],
             authError: AuthError.from(e),
+            isSnackBar: false,
           ),
         );
       } on FirebaseException {
         /// we might not be able to delete the folder
         /// log the user out
-        emit(const AppStateLoggedOut(isLoading: false));
+        emit(
+          const AppStateLoggedOut(
+            isLoading: false,
+            isSnackBar: false,
+          ),
+        );
       }
     });
 
@@ -212,7 +294,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       /// log user out if we don't have an actual
       /// user in app state
       if (user == null) {
-        emit(const AppStateLoggedOut(isLoading: false));
+        emit(
+          const AppStateLoggedOut(
+            isLoading: false,
+            isSnackBar: false,
+          ),
+        );
         return;
       }
 
@@ -222,6 +309,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           isLoading: true,
           user: user,
           images: state.images ?? [],
+          isSnackBar: false,
         ),
       );
 
@@ -231,7 +319,14 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       // after upload is complete, grab the latest file references
       final images = await _getImages(user.uid);
       // emit the new images and turn off loading
-      emit(AppStateLoggedIn(isLoading: false, user: user, images: images));
+      emit(
+        AppStateLoggedIn(
+          isLoading: false,
+          user: user,
+          images: images,
+          isSnackBar: false,
+        ),
+      );
     });
   }
 

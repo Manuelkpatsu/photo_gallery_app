@@ -7,8 +7,17 @@ import 'package:photo_gallery_app/auth/auth_error.dart';
 abstract class AppState {
   final bool isLoading;
   final AuthError? authError;
+  final bool isSnackBar;
+  final String? snackBarTitle;
+  final String? snackBarDescription;
 
-  const AppState({required this.isLoading, this.authError});
+  const AppState({
+    required this.isLoading,
+    this.authError,
+    required this.isSnackBar,
+    this.snackBarTitle,
+    this.snackBarDescription,
+  });
 }
 
 @immutable
@@ -21,7 +30,16 @@ class AppStateLoggedIn extends AppState {
     required this.user,
     required this.images,
     AuthError? authError,
-  }) : super(isLoading: isLoading, authError: authError);
+    required bool isSnackBar,
+    String? snackBarTitle,
+    String? snackBarDescription,
+  }) : super(
+          isLoading: isLoading,
+          authError: authError,
+          isSnackBar: isSnackBar,
+          snackBarTitle: snackBarTitle,
+          snackBarDescription: snackBarDescription,
+        );
 
   @override
   bool operator ==(other) {
@@ -47,7 +65,16 @@ class AppStateLoggedOut extends AppState {
   const AppStateLoggedOut({
     required bool isLoading,
     AuthError? authError,
-  }) : super(isLoading: isLoading, authError: authError);
+    required bool isSnackBar,
+    String? snackBarTitle,
+    String? snackBarDescription,
+  }) : super(
+          isLoading: isLoading,
+          authError: authError,
+          isSnackBar: isSnackBar,
+          snackBarTitle: snackBarTitle,
+          snackBarDescription: snackBarDescription,
+        );
 
   @override
   String toString() =>
@@ -59,7 +86,16 @@ class AppStateIsInRegistrationView extends AppState {
   const AppStateIsInRegistrationView({
     required bool isLoading,
     AuthError? authError,
-  }) : super(isLoading: isLoading, authError: authError);
+    required bool isSnackBar,
+    String? snackBarTitle,
+    String? snackBarDescription,
+  }) : super(
+          isLoading: isLoading,
+          authError: authError,
+          isSnackBar: isSnackBar,
+          snackBarTitle: snackBarTitle,
+          snackBarDescription: snackBarDescription,
+        );
 
   @override
   String toString() =>
@@ -71,7 +107,16 @@ class AppStateIsInForgotPasswordView extends AppState {
   const AppStateIsInForgotPasswordView({
     required bool isLoading,
     AuthError? authError,
-  }) : super(isLoading: isLoading, authError: authError);
+    required bool isSnackBar,
+    String? snackBarTitle,
+    String? snackBarDescription,
+  }) : super(
+          isLoading: isLoading,
+          authError: authError,
+          isSnackBar: isSnackBar,
+          snackBarTitle: snackBarTitle,
+          snackBarDescription: snackBarDescription,
+        );
 
   @override
   String toString() =>
